@@ -1,4 +1,4 @@
-//app.js
+
 App({
   onLaunch: function () {
     // 展示本地存储能力
@@ -37,3 +37,5 @@ App({
     userInfo: null
   }
 })
+
+///** 本APP内标准绿色 #2E8B57 **/
