@@ -1,0 +1,45 @@
+.habit-name{
+  /* border: 1rpx solid; */
+  border-bottom: 1rpx solid;
+  border-color: #BEBEBE;
+  font-weight: 600;
+}
+.line-word{
+  margin: 20rpx;
+  font-size: 20px;
+}
+.content-body{
+  /* background-color: #F5F5F5; */
+  padding-top: 20rpx;
+}
+.input-number{
+  border: 1px solid;
+  width: 50rpx;
+  margin-right: 10rpx;
+  margin-left: 10rpx;
+
+}
+.picker-content{
+  margin-right: 10rpx;
+  /* text-decoration:underline; */
+ border-bottom: 1rpx solid;
+  border-color: #BEBEBE;
+
+}
+.picker-text{
+  color: #BEBEBE;
+
+}
+.tip{
+  color: #F3F3F3;
+  font-size: 12px;
+}
+.submit-habit-view{
+  margin-top: 120rpx;
+
+}
+.submit-habit-view button{
+  width: 70%;
+  background-color: #2E8B57;
+  color: #fff;
+}

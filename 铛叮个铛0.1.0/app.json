@@ -1,0 +1,18 @@
+{
+  "pages":[
+    "pages/habit/habit",
+    
+    "pages/index/index",
+    "pages/logs/logs",
+    
+    "pages/user/user"
+  ],
+  "window":{
+    "backgroundTextStyle":"light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "WeChat",
+    "navigationBarTextStyle":"black"
+  }
+}
+
+// 本APP内标准绿色 #2E8B57

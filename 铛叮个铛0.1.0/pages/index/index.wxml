@@ -1,0 +1,29 @@
+<!--index.wxml-->
+
+
+
+  <view class='user-center'>
+      <image src='/pages/image/user@32.png' class='user-logo' bindtap='userCenter'></image>
+  </view>
+
+
+
+  
+
+<scroll-view class='container' scroll-x scroll-y="false">
+  <view class='habit-item' wx:for="{{habit_list}}" wx:key="habit_id" data-id="{{item.habit_id}}" bindtap='finish' bindlongpress='finishLong' bindtouchstart="bindTouchStart" bindtouchend="bindTouchEnd">
+    <view>{{item.habit_name}}
+    <view class='last-update'>{{item.last_update_time}}</view>
+    
+    </view>
+    
+
+  <view class='finish'><image src='/pages/image/finish@64.png'></image></view>
+  </view>
+</scroll-view>
+
+<view class='add-habit' bindtap='addHabit'>
+  <image src='/pages/image/add@64.png' class='add-image'></image>
+</view>
+  
+

@@ -1,0 +1,44 @@
+<view class='content-body'>
+<view class='line-word'>习惯：</view>
+<input type='text' maxlength='20' auto-focus='false' placeholder='请输入习惯的名称' class='habit-name line-word'></input>
+<view class='line-word'>频率：</view>
+<view class='line-word' style="display: flex;">
+ 
+  <picker  range="{{rate_period}}" value="{{rate_index}}" bindchange="bindPickerChange1">
+      <view class="picker-content" >
+        {{rate_period[rate_index]}} 
+      </view>
+    </picker>
+  <text>次/</text>
+
+  <picker  range="{{rate_period}}" value="{{unit_index}}" bindchange="bindPickerChange2">
+      <view class="picker-content" >
+        {{rate_period[unit_index]}} 
+      </view>
+    </picker>
+
+    <picker  range="{{date_unit}}" value="{{index}}" bindchange="bindPickerChange3">
+      <view class="picker-content" >
+        {{date_unit[index]}} 
+      </view>
+    </picker>
+
+</view>
+
+<!--预览  -->
+<!-- <view class='line-word'>预览</view>
+<view>
+
+</view> -->
+<!-- 提示：彧下意识 -->
+<view class='line-word tip'>提示：
+  <view>1：自律才能自由</view>
+  
+</view>
+
+
+</view>
+
+<view class='submit-habit-view'>
+<button>完成</button>
+</view>
