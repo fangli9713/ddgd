@@ -34,7 +34,7 @@ Page({
   },
   onLoad: function () {
     wx.setNavigationBarTitle({
-      title: '贝壳停车',
+      title: '',
     })
   },
   addHabit: function (e) {
