@@ -23,4 +23,5 @@ public class User implements Serializable {
     private String head_img_url;// varchar(200) DEFAULT NULL,
     private Integer sex;// tinyint(4) DEFAULT NULL,
     private Date reg_time;// datetime DEFAULT NULL,
+    private Integer status;
 }

@@ -32,9 +32,15 @@ public class UserServiceImpl implements  UserService {
 
     @Override
     public List<User> selectUsers(Map<String, Object> paramMap, int pageNum) {
-        final int pageSize = coreProperties.getPageSize();
-        PageHelper.startPage(pageNum);
-        System.out.println("pageSize="+pageSize);
+        final int pageSize = coreProperties.getPage_size();
         return userMapper.selectUsers(paramMap);
+    }
+
+    public int updateUser(User user){
+        return userMapper.updateUser(user);
+    }
+
+    public int inertUser(User user){
+        return userMapper.inertUser(user);
     }
 }

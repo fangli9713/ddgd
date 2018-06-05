@@ -12,7 +12,10 @@ import java.util.Map;
 @Repository
 public interface UserService {
 
-    List<User> selectUserById(Long id);
-    List<User> selectUsers(Map<String,Object> paramMap, int pageNum);
+   //需要加上缓存
+   public List<User> selectUserById(Long id);
+   public List<User> selectUsers(Map<String,Object> paramMap, int pageNum);
 
+   public int updateUser(User user);
+   public int inertUser(User user);
 }

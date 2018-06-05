@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangln.dd.dao.UserHabitMapper">
+
+
+    <sql id="selectFields">
+        <choose>
+            <when test="selectFields != null">
+                <foreach collection="selectFields" item="item" index="index" open=" " separator="," close=" ">${item}
+                </foreach>
+            </when>
+            <otherwise>*</otherwise>
+        </choose>
+    </sql>
+
+    <sql id="where">
+        <if test="id != null">id = #{id}</if>
+        <if test="user_id != null">AND user_id = #{user_id}</if>
+        <if test="use_number != null">AND use_number = #{use_number}</if>
+        <if test="use_rate_unit != null">AND use_rate_unit = #{use_rate_unit}</if>
+        <if test="use_rate_number != null">AND use_rate_number = #{use_rate_number}</if>
+    </sql>
+
+
+    <select id="selectUserHabit" parameterType="java.util.Map" resultType="com.fangln.dd.entity.UserHabit">
+        SELECT <include refid="selectFields"></include> FROM dd_user_habit
+        <where>
+            <include refid="userWhere"/>
+        </where>
+        <choose>
+            <when test="order_by != null">ORDER BY ${order_by}</when>
+            <otherwise>ORDER BY create_time DESC </otherwise>
+        </choose>
+    </select>
+
+
+
+
+    <insert id="insertUserHabit" parameterType="com.fangln.dd.entity.UserHabit">
+        INSERT INTO bk_user (
+          habit_name,
+          user_id,
+          create_time,
+          use_number,
+          use_rate_unit,
+          use_rate_number,
+        ) VALUES (
+          #{habit_name},
+          #{user_id},
+          #{create_time},
+          #{use_number},
+          #{use_rate_unit},
+          #{use_rate_number}
+        )
+    </insert>
+
+
+</mapper>
+

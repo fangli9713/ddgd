@@ -48,4 +48,17 @@ public class MiniappConstant {
 	 */
 	public static final int ERR_INTERNAL=5007;
 
+	/**
+	 * 性别
+	 */
+	public static final int SEX_MALE = 1;
+	public static final int SEX_FEMALE = 0;
+
+
+	/**
+	 * 用户状态
+	 */
+	public static final int USER_NORMAL = 1;
+
+	public static final String CHARSET = "UTF-8";
 }

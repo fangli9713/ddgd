@@ -1,56 +1,58 @@
 package com.fangln.dd.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.AlgorithmParameters;
-import java.security.Key;
-import java.security.Security;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.fangln.dd.entity.User;
+import com.fangln.dd.service.user.UserService;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import org.apache.log4j.Logger;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
+import javax.annotation.PostConstruct;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.security.AlgorithmParameters;
+import java.security.Key;
+import java.security.Security;
+import java.util.*;
 
-import com.fangln.dd.entity.User;
-import com.fangln.dd.service.user.UserService;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.parkplus.cloud.park.core.dto.user.User;
-import com.parkplus.cloud.park.core.service.ServiceConstant;
-import com.parkplus.cloud.park.core.service.ServiceUtil;
-import com.parkplus.cloud.park.core.service.UserId;
-import com.parkplus.cloud.park.core.service.app.AppAccessToken;
-import com.parkplus.cloud.park.core.service.miniapp.MiniappConstant;
-import com.parkplus.cloud.park.core.service.miniapp.MiniappResponse;
-import com.parkplus.cloud.park.core.service.user.UserService;
-import com.parkplus.cloud.park.core.web.WebConstants;
-import com.parkplus.cloud.park.core.web.WebLog;
-import com.parkplus.cloud.park.core.web.WebUtil;
-import com.parkplus.cloud.park.framework.CryptoUtil;
-import com.parkplus.cloud.park.framework.http.HttpUtil;
-
+@Component
 public class MiniappUtil {
+
+	private static Logger logger = Logger.getLogger(MiniappUtil.class);
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private CoreProperties coreProperties;
+
+	private static UserService userServiceImpl;
+	private static CoreProperties corePropertiesImpl;
+
+	@PostConstruct
+	public void init() {
+		userServiceImpl = userService;
+		corePropertiesImpl = coreProperties;
+	}
+
+
+
+
 	
 	//小程序用户后台登录
-	@SuppressWarnings("unused")
-	public static User getUser(HttpServletRequest request , HttpServletResponse response){
+	public  static User getUser(HttpServletRequest request , HttpServletResponse response){
 		Map<?,?> requestMap = getRequestMap(request);
 		String rawData = null,signature = null,encryptedData = null,code = null,iv = null,token = null;
 		if(requestMap!=null){
@@ -70,35 +72,21 @@ public class MiniappUtil {
 			if (requstUri.startsWith(zo)) {
 				//解析token
 					long uid = UserToken.parseToken2Id(token);
-					List<User> userList=userService.selectUsers(uid);
+					List<User> userList=userServiceImpl.selectUserById(uid);
 					if(!CollectionUtils.isEmpty(userList)){
 						return userList.get(0);
 					}
 				}
 				
 			}	
-		}
 		//1：获取session_key
 		String sessionKey = null,purePhoneNumber = null,openid = null;
 		Map<?,?> userMap = null;
 		User user = null;
 		try {
-			//先去cookie获取用户
-			String cookieValue = WebUtil.getCookieValue(request, WebConstants.MINIAPP_OPENID_COOKIE_KEY);
-			if(cookieValue!=null){
-				Key skey=ServiceUtil.getServiceContext().getKeyManager().getAppAccesssTokenKey();
-				String openidTime;
-				try {
-					openidTime = CryptoUtil.decrypt(cookieValue,WebConstants.WEB_CHARSET, skey, skey.getAlgorithm());
-					int index=openidTime.lastIndexOf(',');
-					openid=openidTime.substring(0, index);
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				}
-			}
 			if(!StringUtils.isEmpty(code)){
-				String appId = ServiceUtil.getServiceContext().getCoreConfig().getProperties().getProperty("miniapp.weixin.appid");
-				String secret = ServiceUtil.getServiceContext().getCoreConfig().getProperties().getProperty("miniapp.weixin.appsecret");
+				String appId = corePropertiesImpl.getApp_id();
+				String secret = corePropertiesImpl.getApp_secret();
 				String requestUrl = "https://api.weixin.qq.com/sns/jscode2session?appid="+appId+"&secret="+secret+"&js_code="+code+"&grant_type=authorization_code";  //请求地址 
 				String sessionJson;
 				try {
@@ -135,21 +123,20 @@ public class MiniappUtil {
 				cipher.init(Cipher.DECRYPT_MODE, spec, parameters);// 初始化
 				byte[] resultByte = cipher.doFinal(dataByte);
 				if (null != resultByte && resultByte.length > 0) {
-					String userJson = new String(resultByte, ServiceConstant.CHARSET);
+					String userJson = new String(resultByte, MiniappConstant.CHARSET);
 					userMap = new Gson().fromJson(userJson, Map.class);
 					purePhoneNumber = (String)userMap.get("purePhoneNumber");
 				}
 			}
 			//根据openid 来判断用户是否已经注册了
 			if(openid!=null){
-				UserService userService=ServiceUtil.getServiceContext().getService("userService");
 				Map<String, Object> paramMap = new HashMap<String,Object>();
 				if(purePhoneNumber!=null){
 					paramMap.put("phone", purePhoneNumber);
 				}else{
-					paramMap.put("miniapp_openid", openid);
+					paramMap.put("openid", openid);
 				}
-				List<User> userList=userService.selectUsers(paramMap , null);
+				List<User> userList=userServiceImpl.selectUsers(paramMap , 0);
 				//用户已经存在
 				if(!CollectionUtils.isEmpty(userList)){
 					user = userList.get(0);
@@ -161,8 +148,8 @@ public class MiniappUtil {
 						updateUser.setPhone(purePhoneNumber);
 						if(!update){update = true;}
 					}
-					if(StringUtils.isEmpty(user.getMiniapp_openid())){
-						updateUser.setMiniapp_openid(openid);
+					if(StringUtils.isEmpty(user.getOpenid())){
+						updateUser.setOpenid(openid);
 						if(!update){update = true;}
 					}
 					if(userMap!=null){
@@ -188,68 +175,46 @@ public class MiniappUtil {
 						Object sex = userMap.get("gender");
 						if(StringUtils.isEmpty(user.getSex()) && !StringUtils.isEmpty(sex)){
 							if(sex.toString().equals("1")){
-								updateUser.setSex(ServiceConstant.SEX_MALE);
+								updateUser.setSex(MiniappConstant.SEX_MALE);
 								if(!update){update = true;}
 							}else if(sex.toString().equals("2")){
-								updateUser.setSex(ServiceConstant.SEX_FEMALE);
+								updateUser.setSex(MiniappConstant.SEX_FEMALE);
 								if(!update){update = true;}
 							}
 						}
 					}
 					
-					if(purePhoneNumber!=null){
-						paramMap.clear();
-						paramMap.put("miniapp_openid", openid);
-						List<User> miniappUser = userService.selectUsers(paramMap , null);
-						if(!CollectionUtils.isEmpty(miniappUser)){
-							for (User user2 : miniappUser) {
-								if(StringUtils.isEmpty(user2.getPhone())){
-									userService.handleMutiUsers(user.getId(), user.getDbid(), user2.getId(), user2.getDbid());
-								}
-							}
-						}
-					}
 					if(update){
-						userService.updateUser(updateUser);
+						userServiceImpl.updateUser(updateUser);
 					}
 				}else{
 					if(!StringUtils.isEmpty(purePhoneNumber)){
 						paramMap.clear();
 						paramMap.put("miniapp_openid", openid);
-						List<User> userList1=userService.selectUsers(paramMap , null);
+						List<User> userList1=userServiceImpl.selectUsers(paramMap , 0);
 						//更新用户的手机号
 						if(!CollectionUtils.isEmpty(userList1)){
 							User updateUser = new User();
 							BeanUtils.copyProperties(userList1.get(0), updateUser);
 							updateUser.setPhone(purePhoneNumber);
-							userService.updateUser(updateUser);
+							userServiceImpl.updateUser(updateUser);
 							return updateUser;
 						}
 						
 					}
 					
 				    user=new User();
-					user.setDbid(ServiceUtil.getServiceContext().getCoreConfig().getNewMemberDbid());
-					user.setId(userService.newSequence());
-					user.setLast_login_ip(WebUtil.getRemoteAddress(request));
-					user.setLast_login_time(new Date());
-					user.setLast_update_time(new Date());
-					user.setScore(0);
-					user.setLogin_times(1);
-					user.setReg_ip(user.getLast_login_ip());
 					user.setReg_time(new Date());
-					user.setStatus(ServiceConstant.USER_NORMAL);
+					user.setStatus(MiniappConstant.USER_NORMAL);
 					
-					user.setMiniapp_openid(openid);
-					user.setAppid(ServiceUtil.getServiceContext().getCoreConfig().getWeixinAppid());
-					user.setReg_source(ServiceConstant.reg_weixin);
+					user.setOpenid(openid);
 					if(purePhoneNumber!=null){
 						user.setPhone(purePhoneNumber);
 					}
-					userService.inertUser(user);
+					userServiceImpl.inertUser(user);
 				}
 			}
-			if(user!=null){
+			/*if(user!=null){
 				//cookie 存储用户信息
 				Key skey=ServiceUtil.getServiceContext().getKeyManager().getAppAccesssTokenKey();
 				Calendar cl=Calendar.getInstance();
@@ -260,7 +225,7 @@ public class MiniappUtil {
 		    	 WebUtil.storeCookie(response, WebConstants.WEIXIN_OPENID_COOKIE_KEY, openidTime, WebConstants.OPENID_COOKIE_STORE_TIME, null, "/");
 			}else{
 				writeString(response, null,MiniappConstant.NOT_FOUND_USER,null);
-			}
+			}*/
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -282,9 +247,11 @@ public class MiniappUtil {
 	public static void writeEmpty(HttpServletResponse response){
 		writeString(response, null, MiniappConstant.RESULT_EMPTY, MiniappConstant.RESULT_EMPTY_MSG);
 	}
+
 	public static void writeSuccess(HttpServletResponse response,Object obj){
 		writeString(response, obj, MiniappConstant.OP_SUCCESS, MiniappConstant.OP_SUCCESS_MSG);
 	}
+
 	public static void writeString(HttpServletResponse response,Object obj,int responseCode,String responseMsg){
 		MiniappResponse miniappResponse = new MiniappResponse();
 		miniappResponse.setResp_code(responseCode);
@@ -292,7 +259,12 @@ public class MiniappUtil {
 		miniappResponse.setData(obj);
 		Gson gson=new GsonBuilder().disableHtmlEscaping().create();
 		try {
-			WebUtil.printFinshJson(response, gson.toJson(miniappResponse));
+			//WebUtil.printFinshJson(response, gson.toJson(miniappResponse));
+			response.setCharacterEncoding(MiniappConstant.CHARSET);
+			PrintWriter out = response.getWriter();
+			out.print(gson.toJson(miniappResponse));
+			out.flush();
+			out.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -306,6 +278,7 @@ public class MiniappUtil {
 		return createString(response, obj, MiniappConstant.OP_SUCCESS, MiniappConstant.OP_SUCCESS_MSG);
 
 	}
+
 	public static String createString(HttpServletResponse response,Object obj,int responseCode,String responseMsg){
 		MiniappResponse miniappResponse = new MiniappResponse();
 		miniappResponse.setResp_code(responseCode);
@@ -342,7 +315,7 @@ public class MiniappUtil {
     		  Gson gson=new GsonBuilder().disableHtmlEscaping().create();
     		  map = gson.fromJson(s, Map.class);
 		} catch (Exception e) {
-			WebLog.getLog().warn("小程序请求json格式有误:"+s);
+			  logger.warn("小程序请求json格式有误:"+s);
 		}
        }
        return map;
