@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.parkplus.beike.dao.UserMapper">
+
+    <sql id="selectFields">
+        <choose>
+            <when test="selectFields != null">
+                <foreach collection="selectFields" item="item" index="index" open=" " separator="," close=" ">${item}
+                </foreach>
+            </when>
+            <otherwise>*</otherwise>
+        </choose>
+    </sql>
+
+    <sql id="userWhere">
+        <if test="id != null">id = #{id}</if>
+        <if test="phone != null">AND phone = #{phone}</if>
+        <if test="openid != null">AND openid = #{openid}</if>
+        <if test="unionid != null">AND unionid = #{unionid}</if>
+        <if test="status != null">AND status = #{status}</if>
+        <if test="user_ids !=null">AND id IN <foreach collection="user_ids" item="item" index="index" open=" ("
+                                                      separator="," close=") ">#{item}
+        </foreach>
+        </if>
+        <if test="sex != null">AND sex = #{sex}</if>
+    </sql>
+
+
+    <select id="selectUsers" parameterType="java.util.Map" resultType="User">
+        SELECT <include refid="selectFields"></include> FROM bk_user
+        <where>
+            <include refid="userWhere"/>
+        </where>
+        <choose>
+            <when test="order_by != null">ORDER BY ${order_by}</when>
+            <otherwise>ORDER BY reg_time</otherwise>
+        </choose>
+    </select>
+
+
+    <sql id="udpateUserSQL">
+        <if test="phone != null">phone = #{phone},</if>
+        <if test="nickname != null">nickname = #{nickname},</if>
+        <if test="appid != null">appid = #{appid},</if>
+        <if test="unionid != null">unionid = #{unionid},</if>
+        <if test="province != null">province = #{province},</if>
+        <if test="city != null">city = #{city},</if>
+        <if test="country != null">country = #{country},</if>
+        <if test="head_img_url != null">head_img_url = #{head_img_url},</if>
+        <if test="sex != null">sex = #{sex},</if>
+        <if test="status != null">sex = #{status},</if>
+    </sql>
+
+
+    <update id="updateUser" parameterType="User">
+        UPDATE bk_user
+        <set>
+            <include refid="udpateUserSQL"/>
+        </set>
+        WHERE id=#{id}
+    </update>
+
+    <update id="updateUserByOpenid" parameterType="User">
+        UPDATE bk_user
+        <set>
+            <include refid="udpateUserSQL"/>
+        </set>
+        WHERE openid=#{openid}
+    </update>
+
+    <insert id="inertUser" parameterType="User">
+        INSERT INTO bk_user (
+          id,
+          phone,
+          nickname,
+          openid,
+          unionid,
+          province,
+          city,
+          country,
+          head_img_url,
+          sex,
+          reg_time,
+          status
+        ) VALUES (
+          #{id},
+          #{phone},
+          #{nickname},
+          #{openid},
+          #{unionid},
+          #{province},
+          #{city},
+          #{country},
+          #{head_img_url},
+          #{sex},
+          #{reg_time},
+          #{status}
+        )
+    </insert>
+</mapper>
