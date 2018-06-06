@@ -9,11 +9,11 @@ import java.util.Map;
 @Repository
 public interface UserHabitService {
 
-    List<Map<String,String>> userHabitList(Long userId);
+    List<Map<String,Object>> userHabitList(Long userId);
 
-    List<Map<String,String>> userHabitList(Long userId,int pageNum);
+    List<Map<String,Object>> userHabitList(Long userId,int pageNum);
 
-    Map<String,String> userHabitDetail(Long userHabitId);
+    Map<String,Object> userHabitDetail(Long userHabitId);
 
     int addUserHabit(UserHabit userHabit);
 

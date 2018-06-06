@@ -1,7 +1,9 @@
 package com.fangln.dd.util;
 
 import com.fangln.dd.entity.User;
+import com.fangln.dd.entity.UserToken;
 import com.fangln.dd.service.user.UserService;
+import com.fangln.dd.util.http.HttpUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.log4j.Logger;
@@ -9,7 +11,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -23,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.security.AlgorithmParameters;
-import java.security.Key;
 import java.security.Security;
 import java.util.*;
 
@@ -65,20 +65,22 @@ public class MiniappUtil {
 		}
 		
 		if(!StringUtils.isEmpty(token)){
-			final String PRIVATE_URI = "/miniapp/private/";
+			final String PRIVATE_URI = "/mini/private/";
 			String contextPath = request.getContextPath();
 			String zo = contextPath + PRIVATE_URI;
 			String requstUri = request.getRequestURI();
 			if (requstUri.startsWith(zo)) {
 				//解析token
-					long uid = UserToken.parseToken2Id(token);
-					List<User> userList=userServiceImpl.selectUserById(uid);
+				final UserToken userToken = UserTokenUtil.parseToken(token);
+				if(userToken!=null){
+					List<User> userList=userServiceImpl.selectUserById(userToken.getUser_id());
 					if(!CollectionUtils.isEmpty(userList)){
 						return userList.get(0);
 					}
 				}
+			}
 				
-			}	
+		}
 		//1：获取session_key
 		String sessionKey = null,purePhoneNumber = null,openid = null;
 		Map<?,?> userMap = null;
@@ -214,18 +216,18 @@ public class MiniappUtil {
 					userServiceImpl.inertUser(user);
 				}
 			}
-			/*if(user!=null){
-				//cookie 存储用户信息
-				Key skey=ServiceUtil.getServiceContext().getKeyManager().getAppAccesssTokenKey();
-				Calendar cl=Calendar.getInstance();
-				cl.add(Calendar.SECOND, 7200);
-				byte[] d=(openid+","+cl.getTimeInMillis()).getBytes(WebConstants.WEB_CHARSET);
-				String openidTime=CryptoUtil.encrypt(d, skey, skey.getAlgorithm());
-				 //存放到cookie中
-		    	 WebUtil.storeCookie(response, WebConstants.WEIXIN_OPENID_COOKIE_KEY, openidTime, WebConstants.OPENID_COOKIE_STORE_TIME, null, "/");
+			if(user!=null){
+				//cookie 存储用户信息(或者其他方式缓存用户信息)
+//				Key skey=ServiceUtil.getServiceContext().getKeyManager().getAppAccesssTokenKey();
+//				Calendar cl=Calendar.getInstance();
+//				cl.add(Calendar.SECOND, 7200);
+//				byte[] d=(openid+","+cl.getTimeInMillis()).getBytes(WebConstants.WEB_CHARSET);
+//				String openidTime=CryptoUtil.encrypt(d, skey, skey.getAlgorithm());
+//				 //存放到cookie中
+//		    	 WebUtil.storeCookie(response, WebConstants.WEIXIN_OPENID_COOKIE_KEY, openidTime, WebConstants.OPENID_COOKIE_STORE_TIME, null, "/");
 			}else{
 				writeString(response, null,MiniappConstant.NOT_FOUND_USER,null);
-			}*/
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -256,7 +258,7 @@ public class MiniappUtil {
 		MiniappResponse miniappResponse = new MiniappResponse();
 		miniappResponse.setResp_code(responseCode);
 		miniappResponse.setResp_des(responseMsg);
-		miniappResponse.setData(obj);
+		miniappResponse.setData(JavaBeanUtil.toStringMap(obj));
 		Gson gson=new GsonBuilder().disableHtmlEscaping().create();
 		try {
 			//WebUtil.printFinshJson(response, gson.toJson(miniappResponse));

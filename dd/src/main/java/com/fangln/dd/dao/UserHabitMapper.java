@@ -10,6 +10,6 @@ import java.util.Map;
 public interface UserHabitMapper {
 
     List<UserHabit> selectUserHabit(Map<String,Object> paramMap);
-    List<UserHabit> insertUserHabit(UserHabit userHabit);
+    int insertUserHabit(UserHabit userHabit);
 
 }

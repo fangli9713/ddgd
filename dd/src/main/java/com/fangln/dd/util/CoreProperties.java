@@ -34,4 +34,6 @@ public class CoreProperties {
 
     private String app_secret;
 
+    private int token_expire;
+
 }
