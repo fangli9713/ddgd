@@ -10,55 +10,7 @@ Page({
       habit_name: "晚上跑步",
       last_update_time: "2018/06/01 19:30",
       is_can_submit: "1"
-    },
-    {
-      habit_id: "13",
-      habit_name: "中午午休",
-      last_update_time: "2018/06/01 13:00",
-      is_can_submit: "0"
-      },
-      {
-        habit_id: "14",
-        habit_name: "中午午休",
-        last_update_time: "2018/06/01 13:00",
-        is_can_submit: "0"
-    },
-    {
-      habit_id: "15",
-      habit_name: "中午午休",
-      last_update_time: "2018/06/01 13:00",
-      is_can_submit: "0"
-      },
-      {
-        habit_id: "16",
-        habit_name: "中午午休",
-        last_update_time: "2018/06/01 13:00",
-        is_can_submit: "0"
-    },
-    {
-      habit_id: "17",
-      habit_name: "中午午休",
-      last_update_time: "2018/06/01 13:00",
-      is_can_submit: "0"
-      },
-      {
-        habit_id: "18",
-        habit_name: "中午午休",
-        last_update_time: "2018/06/01 13:00",
-        is_can_submit: "0"
-    },
-    {
-      habit_id: "19",
-      habit_name: "中午午休",
-      last_update_time: "2018/06/01 13:00",
-      is_can_submit: "0"
-      },
-      {
-        habit_id: "20",
-        habit_name: "中午午休",
-        last_update_time: "2018/06/01 13:00",
-        is_can_submit: "0"
-      }],
+    }],
     disabled: false,
   },
 
@@ -70,9 +22,23 @@ Page({
     })
   },
   onLoad: function () {
+    var that = this;
     wx.setNavigationBarTitle({
       title: '铛叮个铛',
-    })
+    }),
+    //加载首页数据
+      util.sendPost('login', "{}", function success(result) {
+        console.log(result)
+        if (result.code == 0){
+          that.setData({
+            habit_list: result.data
+          })
+        }
+        
+      }, function fail(result) {
+
+
+      }, this);
   },
   addHabit: function (e) {
     wx.navigateTo({
@@ -120,9 +86,10 @@ bindTouchEnd: function (e) {
   finishLong: function (e) {
     var id = e.currentTarget.dataset.id;
     var str = { "idLong": id };
+    console.log("长按")
     //请求之前设置按钮不可用 防止重复提交
     console.log(str)
-   // wx.vibrateShort();
+    wx.vibrateShort();
     return;
     this.setData({
       disabled: true

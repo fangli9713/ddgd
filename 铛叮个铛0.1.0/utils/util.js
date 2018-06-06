@@ -66,5 +66,5 @@ function sendPost(urlKey, jsonString, success, fail, re) {
 
 module.exports = {
   formatTime: formatTime,
-  sendPost: sendPost
+  sendPost: sendPost  
 }

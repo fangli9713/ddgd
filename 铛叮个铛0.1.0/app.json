@@ -1,10 +1,8 @@
 {
   "pages":[
-    "pages/habit/habit",
-    
     "pages/index/index",
+    "pages/habit/habit",
     "pages/logs/logs",
-    
     "pages/user/user"
   ],
   "window":{

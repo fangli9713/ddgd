@@ -1,5 +1,6 @@
-
 App({
+ 
+
   onLaunch: function () {
     // 展示本地存储能力
     var logs = wx.getStorageSync('logs') || []
@@ -10,6 +11,51 @@ App({
     wx.login({
       success: res => {
         // 发送 res.code 到后台换取 openId, sessionKey, unionId
+        console.log(res);
+      //拿到code 调用后台的登录接口 换取token
+        wx.request({
+          url: url,
+          method: 'POST',
+          data: jsonString,
+          dataType: 'json',
+          success: function (res) {
+
+            //console.log(res.data)
+            wx.hideLoading()
+            if (res.statusCode == 200 && res.data.resp_code == 0) {
+              success(res.data);
+              re.setData({
+                disabled: false
+              })
+            } else {
+              if (res.data && res.data.resp_des) {
+                wx.showToast({
+                  title: res.data.resp_des,
+                  icon: 'none',
+                  duration: 2000
+                })
+                fail(res.data)
+              } else {
+                wx.showToast({
+                  title: '请求失败，请您稍后重试.',
+                  icon: 'none',
+                  duration: 2000
+                })
+              }
+              re.setData({
+                disabled: false
+              })
+            }
+
+          },
+          fail: function (res) {
+            wx.hideLoading()
+            fail()
+          },
+          complete: function (res) {
+
+          }
+        })
       }
     })
     // 获取用户信息
@@ -34,7 +80,16 @@ App({
     // })
   },
   globalData: {
-    userInfo: null
+    userInfo: null,
+    baseUrl:"https://foundfun.fun",
+    interfaceUrl:{
+      login: "/mini/public/login", 
+      index:"/mini/private/index"
+
+    }
+
+
+
   }
 })
 
