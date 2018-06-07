@@ -1,7 +1,15 @@
 server:
     port: 80
-
+#    ssl:
+#    key-store: /var/local/project/cert/214751764880967/foundfun.fun.jks
+#    #这个是在生成证书的时候设置的密码
+#    key-store-password: 214751764880967
+#fzk:
+#  port: 8091
 spring:
+#返回的前缀   目录对应src/main/webapp下
+    thymeleaf:
+        cache: false
     datasource:
        type: com.alibaba.druid.pool.DruidDataSource
 #       druid: #监控统计拦截的filters

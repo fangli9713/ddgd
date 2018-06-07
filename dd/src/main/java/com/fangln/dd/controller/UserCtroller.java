@@ -9,6 +9,8 @@ import com.fangln.dd.util.MiniappUtil;
 import com.fangln.dd.util.UserTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ConcurrentModel;
+import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -33,9 +35,9 @@ public class UserCtroller {
     private UserHabitService userHabitService;
 
     @RequestMapping("/")
-    @ResponseBody
-    public String welcome(HttpServletRequest request, HttpServletResponse response){
-        return "welcome to foundfun";
+    public String welcome(HttpServletRequest request, HttpServletResponse response,Model model){
+        model.addAttribute("name","li yuan fang");
+        return "index";
     }
     /**
      * 登录
