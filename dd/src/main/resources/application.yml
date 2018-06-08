@@ -8,7 +8,13 @@ server:
 #  port: 8091
 spring:
 #返回的前缀   目录对应src/main/webapp下
+    mvc:
+        view:
+            prefix: classpath:static/view/
+            suffix: .html
     thymeleaf:
+#        prefix: classpath:/static/view/
+#        suffix: .html
         cache: false
     datasource:
        type: com.alibaba.druid.pool.DruidDataSource
