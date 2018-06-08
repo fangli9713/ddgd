@@ -25,33 +25,33 @@ import javax.servlet.http.HttpServletResponse;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Override
+    /*@Override
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-        /* 是否通过请求Url的扩展名来决定media type */
+        *//* 是否通过请求Url的扩展名来决定media type *//*
         configurer.favorPathExtension(true)
-                /* 不检查Accept请求头 */
+                *//* 不检查Accept请求头 *//*
                 .ignoreAcceptHeader(true)
                 .parameterName("mediaType")
-                /* 设置默认的media yype */
+                *//* 设置默认的media yype *//*
                 .defaultContentType(MediaType.TEXT_HTML)
-                /* 请求以.html结尾的会被当成MediaType.TEXT_HTML*/
+                *//* 请求以.html结尾的会被当成MediaType.TEXT_HTML*//*
                 .mediaType("html", MediaType.TEXT_HTML)
-                /* 请求以.json结尾的会被当成MediaType.APPLICATION_JSON*/
+                *//* 请求以.json结尾的会被当成MediaType.APPLICATION_JSON*//*
                 .mediaType("json", MediaType.APPLICATION_JSON);
     }
-
+*/
    /* @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
         registry.jsp("/WEB-INF/jsp/", ".jsp");
         registry.enableContentNegotiation(new MappingJackson2JsonView());
     }*/
 
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-       // registry.addResourceHandler("*.css","*.js","*.jpg").addResourceLocations("/static/**");
-        registry.addResourceHandler("*/*.html").addResourceLocations("classpath:templates/**");
-
-    }
+//    @Override
+//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//       // registry.addResourceHandler("*.css","*.js","*.jpg").addResourceLocations("/static/**");
+//        registry.addResourceHandler("*/*.html").addResourceLocations("classpath:templates/**");
+//
+//    }
 
 
 
