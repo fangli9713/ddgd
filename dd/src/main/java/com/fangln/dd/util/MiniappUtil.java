@@ -258,15 +258,24 @@ public class MiniappUtil {
 		MiniappResponse miniappResponse = new MiniappResponse();
 		miniappResponse.setResp_code(responseCode);
 		miniappResponse.setResp_des(responseMsg);
-		miniappResponse.setData(JavaBeanUtil.toStringMap(obj));
+		miniappResponse.setData(obj);
 		Gson gson=new GsonBuilder().disableHtmlEscaping().create();
 		try {
 			//WebUtil.printFinshJson(response, gson.toJson(miniappResponse));
 			response.setCharacterEncoding(MiniappConstant.CHARSET);
-			PrintWriter out = response.getWriter();
-			out.print(gson.toJson(miniappResponse));
-			out.flush();
-			out.close();
+			response.setContentType("application/json");
+			response.setHeader("Pragma","No-cache");
+
+			/**
+			 * 测试用 解决前端跨域请求
+			 */
+		/*response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");  */
+			response.setHeader("Cache-Control","no-cache");
+			response.setDateHeader("Expires", 0);
+			PrintWriter w=response.getWriter();
+			w.write(gson.toJson(miniappResponse));
+			w.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

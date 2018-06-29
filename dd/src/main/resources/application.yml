@@ -43,7 +43,7 @@ spring:
        pool-prepared-statements: false
        max-pool-prepared-statement-per-connection-size: 20
 mybatis:
-  mapper-locations: classpath:com.fangln.dd.dao/*.xml
+  mapper-locations: classpath:sql/*.xml
   type-aliases-package: com.fangln.dd.entity
 
 #pagehelper分页插件
