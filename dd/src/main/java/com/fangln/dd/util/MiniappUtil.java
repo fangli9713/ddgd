@@ -261,9 +261,11 @@ public class MiniappUtil {
 		miniappResponse.setData(obj);
 		Gson gson=new GsonBuilder().disableHtmlEscaping().create();
 		try {
+			String json = gson.toJson(miniappResponse);
 			//WebUtil.printFinshJson(response, gson.toJson(miniappResponse));
 			response.setCharacterEncoding(MiniappConstant.CHARSET);
-			response.setContentType("application/json");
+//			response.setContentType("application/json");
+			response.setContentType("text/plain;charset=UTF-8");
 			response.setHeader("Pragma","No-cache");
 
 			/**
@@ -274,7 +276,7 @@ public class MiniappUtil {
 			response.setHeader("Cache-Control","no-cache");
 			response.setDateHeader("Expires", 0);
 			PrintWriter w=response.getWriter();
-			w.write(gson.toJson(miniappResponse));
+			w.write(json);
 			w.close();
 		} catch (IOException e) {
 			e.printStackTrace();
