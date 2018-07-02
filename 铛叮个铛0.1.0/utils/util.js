@@ -14,25 +14,27 @@ const formatNumber = n => {
   return n[1] ? n : '0' + n
 }
 //封装网络请求
-function sendPost(urlKey, jsonString, success, fail, re) {
+function sendPost(urlKey, jsonString, success, fail, re,showToast) {
   var app = getApp();
   var url = app.globalData.baseUrl + app.globalData.interfaceUrl[urlKey];
+  console.log("请求的url=" + url+",data="+jsonString)
   wx.request({
     url: url,
     method: 'POST',
     data: jsonString,
-    dataType: 'json',
+    header:{
+      'Content-Type':'application/json'
+    },
     success: function (res) {
-
-      //console.log(res.data)
-      wx.hideLoading()
-      if (res.statusCode == 200 && res.data.resp_code == 0) {
+      console.log("data="+JSON.stringify(res))
+      // wx.hideLoading()
+      if (res.statusCode == 200 && res.data) {
         success(res.data);
         re.setData({
           disabled: false
         })
       } else {
-        if (res.data && res.data.resp_des) {
+        if (res.data && res.data.resp_des && showToast ) {
           wx.showToast({
             title: res.data.resp_des,
             icon: 'none',
