@@ -271,8 +271,8 @@ public class MiniappUtil {
 			/**
 			 * 测试用 解决前端跨域请求
 			 */
-		/*response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");  */
+		response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
 			response.setHeader("Cache-Control","no-cache");
 			response.setDateHeader("Expires", 0);
 			PrintWriter w=response.getWriter();
