@@ -26,10 +26,10 @@ public class WebSocketClientTest {
     }
 
     public static void connect() throws Exception {
-        String parkId = "Q3bCydBWvT-kEcGhAJDtG3";
+        String parkId = "wMg4YyezfDloXUwwK5LMzmbUs2bgXM893n_ILhzcpB7";
         String secret = "bcvbza2323zs22132123211a121";
         String p = CryptoUtil.MD5Encode(parkId+secret);
-        String uri = "ws://10.1.3.129:8080/core/carpark/parkconn/Q3bCydBWvT-kEcGhAJDtG3?b="+p;
+        String uri = "ws://10.1.3.129:8088/superpark/user/conn/superpark/wMg4YyezfDloXUwwK5LMzmbUs2bgXM893n_ILhzcpB7?b="+p;
 
         client = new Client(new URI(uri), new Draft_6455(), null, 0);
         client.connect();
@@ -66,7 +66,7 @@ class Task extends TimerTask {
             }
             if(WebSocketClientTest.client!=null) {
                 DataProtocol dataProtocol = new DataProtocol();
-                dataProtocol.setCmd("abc");
+                dataProtocol.setCmd("login");
                 Map<String,String> map = new HashMap<>();
                 map.put("1","2");
                 dataProtocol.setData(map);

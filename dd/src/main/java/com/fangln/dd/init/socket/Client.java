@@ -5,6 +5,7 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft;
 import org.java_websocket.handshake.ServerHandshake;
 
+import javax.websocket.server.ServerEndpoint;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.ByteBuffer;
@@ -39,7 +40,7 @@ public class Client extends WebSocketClient {
         map.put("1","2");
         dataProtocol.setData(map);
         dataProtocol.setMsgId("123");
-        send(dataProtocol.toSendString());
+       // send(dataProtocol.toSendString());
 
 
     }
