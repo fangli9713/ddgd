@@ -12,13 +12,13 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 /**
  * Created by Fangln on 2018/7/25.
  */
-public class Client {
+public class NettyClient {
 
     private int port;
     private String host;
     private SocketChannel socketChannel;
 
-    public Client(int port, String host) {
+    public NettyClient(int port, String host) {
         this.host = host;
         this.port = port;
         start();

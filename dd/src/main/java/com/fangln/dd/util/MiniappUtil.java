@@ -1,11 +1,10 @@
 package com.fangln.dd.util;
 
+import com.alibaba.fastjson.JSON;
 import com.fangln.dd.entity.User;
 import com.fangln.dd.entity.UserToken;
 import com.fangln.dd.service.user.UserService;
 import com.fangln.dd.util.http.HttpUtil;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.BeanUtils;
@@ -93,7 +92,7 @@ public class MiniappUtil {
 				String sessionJson;
 				try {
 					sessionJson = HttpUtil.doJsonRquest(requestUrl, null, null);
-					Map<?,?> sessionMap = new Gson().fromJson(sessionJson, Map.class);
+					Map<?,?> sessionMap = (Map)JSON.parse(sessionJson);
 					openid = (String)sessionMap.get("openid");
 					sessionKey = (String)sessionMap.get("session_key");
 				} catch (Exception e) {
@@ -126,7 +125,7 @@ public class MiniappUtil {
 				byte[] resultByte = cipher.doFinal(dataByte);
 				if (null != resultByte && resultByte.length > 0) {
 					String userJson = new String(resultByte, MiniappConstant.CHARSET);
-					userMap = new Gson().fromJson(userJson, Map.class);
+					userMap = (Map)JSON.parse(userJson);
 					purePhoneNumber = (String)userMap.get("purePhoneNumber");
 				}
 			}
@@ -259,9 +258,8 @@ public class MiniappUtil {
 		miniappResponse.setResp_code(responseCode);
 		miniappResponse.setResp_des(responseMsg);
 		miniappResponse.setData(obj);
-		Gson gson=new GsonBuilder().disableHtmlEscaping().create();
 		try {
-			String json = gson.toJson(miniappResponse);
+			String json = JSON.toJSONString(miniappResponse);
 			//WebUtil.printFinshJson(response, gson.toJson(miniappResponse));
 			response.setCharacterEncoding(MiniappConstant.CHARSET);
 //			response.setContentType("application/json");
@@ -297,8 +295,7 @@ public class MiniappUtil {
 		miniappResponse.setResp_code(responseCode);
 		miniappResponse.setResp_des(responseMsg);
 		miniappResponse.setData(obj);
-		Gson gson=new GsonBuilder().disableHtmlEscaping().create();
-		return gson.toJson(miniappResponse);
+		return JSON.toJSONString(miniappResponse);
 	}
 	
 	public static Map<?,?> getRequestMap(HttpServletRequest request){
@@ -325,8 +322,7 @@ public class MiniappUtil {
         Map<?,?> map = null;
        if(s!=null){
     	  try {
-    		  Gson gson=new GsonBuilder().disableHtmlEscaping().create();
-    		  map = gson.fromJson(s, Map.class);
+    		  map = (Map)JSON.parse(s);
 		} catch (Exception e) {
 			  logger.warn("小程序请求json格式有误:"+s);
 		}

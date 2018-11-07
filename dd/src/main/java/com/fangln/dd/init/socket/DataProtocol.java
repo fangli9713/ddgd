@@ -1,8 +1,7 @@
 package com.fangln.dd.init.socket;
 
-import com.google.gson.Gson;
+import com.alibaba.fastjson.JSON;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -51,10 +50,9 @@ public class DataProtocol{
 	}
 
 	public String toSendString() {
-		Gson gson=new Gson();
 	    String dataValue;
 	    if(data!=null){
-	    	dataValue=gson.toJson(data);
+	    	dataValue=JSON.toJSONString(data);
 	    }else{
 	    	dataValue=null;	
 	    }
@@ -62,7 +60,7 @@ public class DataProtocol{
 	    data=dataValue;
 	    String result;
 	    try{
-	    	result=gson.toJson(this);
+	    	result=JSON.toJSONString(this);
 	    }finally{
 	    	data=l;
 	    }
@@ -72,8 +70,8 @@ public class DataProtocol{
 
 
 	public static DataProtocol parse(String jsonString) throws Exception {
-		Gson gson=new Gson();
-		DataProtocol p=gson.fromJson(jsonString, DataProtocol.class);
+
+		DataProtocol p=(DataProtocol)JSON.parse(jsonString);
 		
 		if(p.cmd==null){
 			throw new Exception("缺少参数 cmd! 数据:"+jsonString);
@@ -88,7 +86,7 @@ public class DataProtocol{
              if(cl==null){
 				 cl=LinkedHashMap.class;
 			 }
-             Object d=gson.fromJson((String)p.data, cl);
+             Object d= JSON.parse((String)p.getData());
              p.setData(d);
 		}
 		return p;

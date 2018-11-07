@@ -1,8 +1,11 @@
 package com.fangln.dd.init.socket;
 
-import com.google.gson.Gson;
+import com.alibaba.fastjson.JSON;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.*;
 
@@ -29,7 +32,7 @@ public class ScoketClient {
 						writer = new BufferedWriter(ow);
 						Map<String,String> map = new HashMap<>();
 						map.put("cmd", "123");
-						writer.write(new Gson().toJson(map));
+						writer.write(JSON.toJSONString(map));
 						writer.flush();
 //						socket.shutdownOutput();
 //						System.out.println("消息发送完成");

@@ -22,7 +22,6 @@ import java.util.Properties;
 /**
  * Created by Fangln on 2018/7/2.
  */
-@Configuration
 @EnableTransactionManagement
 public class CoreDataSourceConfig {
     @Value("${mybatis.mapper-locations}")

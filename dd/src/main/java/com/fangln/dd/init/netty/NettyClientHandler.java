@@ -1,6 +1,6 @@
 package com.fangln.dd.init.netty;
 
-import com.google.gson.Gson;
+import com.alibaba.fastjson.JSON;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -19,7 +19,7 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<RequestInfo>
         req.setType(msg.getType());
         Map<String,String> dmap = new HashMap<>();
         dmap.put("status","ok");
-        req.setData(new Gson().toJson(dmap));
+        req.setData(JSON.toJSONString(dmap));
         ctx.channel().writeAndFlush(req);
 
     }

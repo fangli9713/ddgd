@@ -1,11 +1,9 @@
 package com.fangln.dd.init.socket;
 
-import com.google.gson.Gson;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft;
 import org.java_websocket.handshake.ServerHandshake;
 
-import javax.websocket.server.ServerEndpoint;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.ByteBuffer;
