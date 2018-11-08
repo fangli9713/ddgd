@@ -18,7 +18,7 @@ public class QuartzConfig {
     @Bean
     public Trigger testQuartzTrigger() {
 //        SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.simpleSchedule()
-//            .withIntervalInSeconds(100) //设置时间周期单位秒
+//            .withIntervalInSeconds(2000) //设置时间周期单位秒
 //            .repeatForever();
         CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule("0 0 1 * * ?");
         return TriggerBuilder.newTrigger()
