@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Created by Fangln on 2018/11/7.
  */
-@Configuration
+//@Configuration
 public class QuartzConfig {
 
     @Bean
