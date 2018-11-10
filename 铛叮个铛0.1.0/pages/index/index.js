@@ -5,12 +5,14 @@ var util = require('../../utils/util.js');
 
 Page({
   data: {
-    habit_list: [{
-      habit_id: "12",
-      habit_name: "晚上跑步",
-      last_update_time: "2018/06/01 19:30",
-      is_can_submit: "1"
-    }],
+    habit_list: [],
+    //   {
+    //   habit_id: "12",
+    //   habit_name: "晚上跑步",
+    //   last_update_time: "2018/06/01 19:30",
+    //   is_can_submit: "1"
+    // }
+  
     disabled: false,
   },
 
@@ -22,24 +24,32 @@ Page({
     })
   },
   onLoad: function () {
+    
     var that = this;
+    var token = null;
+    wx.showLoading({
+      title: '正在加载中...',
+    });
+    var tm = 0;    
+    var timer =  setInterval(function () {
+      tm ++;
+        if (token != null || tm>30) {
+          clearInterval(timer)
+          var jsonString = '{"token":' + token + '}'
+          //加载首页数据
+          that.index(jsonString);
+          wx.hideLoading();
+          return;
+        }
+        token = app.globalData.token;
+       
+      }, 1000); 
     wx.setNavigationBarTitle({
       title: '铛叮个铛',
-    }),
-    //加载首页数据
-      util.sendPost('login', "{}", function success(result) {
-        console.log(result)
-        if (result.code == 0){
-          that.setData({
-            habit_list: result.data
-          })
-        }
-        
-      }, function fail(result) {
-
-
-      }, this);
+    })
   },
+
+
   addHabit: function (e) {
     wx.navigateTo({
       url: '/pages/habit/habit',
@@ -102,6 +112,25 @@ bindTouchEnd: function (e) {
 
     }, this);
     //console.log(e.target.dataset.id)
-  }
+  },
+
+  index: function (jsonString){
+    var that = this;
+
+    util.sendPost('index', jsonString, function success(result) {
+      console.log("result.code=" + result.resp_code)
+      if (result.resp_code == 0) {
+       
+        that.setData({
+          habit_list: result.data
+        })
+      }
+      console.log('habit_list=' + JSON.stringify(that.data.habit_list[0]));
+
+    }, function fail(result) {
+
+
+    }, this,false);
+  }  
 
 })

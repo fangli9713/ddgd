@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangln.dd.dao.AshareDao">
+    <select id="selectAshareList" resultType="com.fangln.dd.dto.Ashare">
+        select * from ashare_list order by id limit 300
+
+    </select>
+
+    <select id="selectAshareHistoryPriceList" parameterType="com.fangln.dd.dto.HistoryPrice" resultType="com.fangln.dd.dto.HistoryPrice">
+        select * from ashare_history
+        <where>
+            <if test="code != null">and code = #{code}</if>
+            <if test="date != null">and date = #{date}</if>
+
+        </where>
+        order by  date
+        limit 1000
+    </select>
+
+    <insert id="insertAshareHistoryPrice" parameterType="com.fangln.dd.dto.HistoryPrice">
+        insert into ashare_history (
+        code,
+        alias,
+        date,
+        open,
+        close,
+        high,
+        low,
+        volume,
+        psy_type,
+        psy,
+        psyma,
+        create_time)values (
+        #{code},
+        #{alias},
+        #{date},
+        #{open},
+        #{close},
+        #{high},
+        #{low},
+        #{volume},
+        #{psy_type},
+        #{psy},
+        #{psyma},
+        SYSDATE()
+        )
+
+
+    </insert>
+
+</mapper>

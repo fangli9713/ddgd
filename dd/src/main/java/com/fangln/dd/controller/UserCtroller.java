@@ -3,6 +3,7 @@ package com.fangln.dd.controller;
 import com.fangln.dd.entity.User;
 import com.fangln.dd.entity.UserHabit;
 import com.fangln.dd.service.user.UserHabitService;
+import com.fangln.dd.util.JavaBeanUtil;
 import com.fangln.dd.util.MiniappConstant;
 import com.fangln.dd.util.MiniappUtil;
 import com.fangln.dd.util.UserTokenUtil;
@@ -14,10 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Fangln on 2018/6/5.
@@ -68,7 +66,11 @@ public class UserCtroller {
             MiniappUtil.writeEmpty(response);
             return;
         }
-        MiniappUtil.writeSuccess(response,maps);
+        List<Map<String,Object>> returnList = new ArrayList<>();
+        for (Map<String, Object> m:maps) {
+            returnList.add(JavaBeanUtil.toStringMap(m));
+        }
+        MiniappUtil.writeSuccess(response,returnList);
     }
 
     /**

@@ -11,7 +11,7 @@
   
 
 <scroll-view class='container' scroll-x scroll-y="false">
-  <view class='habit-item' wx:for="{{habit_list}}" wx:key="habit_id" data-id="{{item.habit_id}}" bindtap='finish' bindlongpress='finishLong' bindtouchstart="bindTouchStart" bindtouchend="bindTouchEnd">
+  <view class='habit-item' wx:for="{{habit_list}}" wx:key="id" data-id="{{item.id}}" bindtap='finish' bindlongpress='finishLong' bindtouchstart="bindTouchStart" bindtouchend="bindTouchEnd">
     <view>{{item.habit_name}}
     <view class='last-update'>{{item.last_update_time}}</view>
     

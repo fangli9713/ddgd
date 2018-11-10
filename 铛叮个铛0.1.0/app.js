@@ -8,25 +8,25 @@ App({
     wx.setStorageSync('logs', logs)
 
     // 登录
+    var that = this;
     wx.login({
-      success: res => {
+      success: wxLoginRes => {
         // 发送 res.code 到后台换取 openId, sessionKey, unionId
-        console.log(res);
+        console.log(wxLoginRes);
       //拿到code 调用后台的登录接口 换取token
+        var url = 'https://foundfun.fun/mini/public/login';
+        var jsonString = { "code": wxLoginRes.code};
         wx.request({
           url: url,
           method: 'POST',
           data: jsonString,
           dataType: 'json',
           success: function (res) {
-
-            //console.log(res.data)
-            wx.hideLoading()
+            console.log(res.data.data.token)
+           // wx.hideLoading()
             if (res.statusCode == 200 && res.data.resp_code == 0) {
-              success(res.data);
-              re.setData({
-                disabled: false
-              })
+              that.globalData.token = res.data.data.token;
+              console.log("token=" + that.globalData.token)
             } else {
               if (res.data && res.data.resp_des) {
                 wx.showToast({
@@ -34,7 +34,7 @@ App({
                   icon: 'none',
                   duration: 2000
                 })
-                fail(res.data)
+                
               } else {
                 wx.showToast({
                   title: '请求失败，请您稍后重试.',
@@ -42,9 +42,7 @@ App({
                   duration: 2000
                 })
               }
-              re.setData({
-                disabled: false
-              })
+             
             }
 
           },
@@ -82,6 +80,7 @@ App({
   globalData: {
     userInfo: null,
     baseUrl:"https://foundfun.fun",
+    token:null,
     interfaceUrl:{
       login: "/mini/public/login", 
       index:"/mini/private/index"

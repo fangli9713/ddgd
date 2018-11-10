@@ -12,10 +12,10 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Created by Fangln on 2018/6/7.
  */
-@Configuration
+//@Configuration
 public class HttpsConfiguration {
 
-    @Bean
+    /*@Bean
     public ServletWebServerFactory servletWebServerFactory(){
         TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory(){
             @Override
@@ -36,9 +36,9 @@ public class HttpsConfiguration {
     public Connector httpConnector(){
         Connector connector = new Connector("org.apache.coyote.http11.Http11NioProtocol");
         connector.setScheme("http");
-        connector.setPort(80);
+        connector.setPort(8091);
         connector.setSecure(false);
         connector.setRedirectPort(443);
         return  connector;
-    }
+    }*/
 }
