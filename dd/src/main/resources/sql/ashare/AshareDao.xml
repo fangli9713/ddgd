@@ -11,10 +11,12 @@
         <where>
             <if test="code != null">and code = #{code}</if>
             <if test="date != null">and date = #{date}</if>
-
+            <if test="psy != null">and #{psy} >= psy</if>
+            <if test="close != null">and close > #{close}</if>
+            <if test="date_gt != null">and date > #{date_gt}</if>
         </where>
         order by  date
-        limit 1000
+
     </select>
 
     <insert id="insertAshareHistoryPrice" parameterType="com.fangln.dd.dto.HistoryPrice">
@@ -47,5 +49,35 @@
 
 
     </insert>
+    
+    <select id="selectAshareTransactionList" parameterType="com.fangln.dd.dto.AshareTransaction" resultType="com.fangln.dd.dto.AshareTransaction">
+        select * from ashare_transaction
+        <where>
+            <if test="code != null">and code = #{code}</if>
+            <if test="date != null">and date = #{date}</if>
+        </where>
+    </select>
+
+    <insert id="insertAshareTransaction" parameterType="com.fangln.dd.dto.AshareTransaction" >
+        insert into ashare_transaction(
+          code,
+          date,
+          type,
+          price,
+          create_time
+
+        )values (#{code},#{date},#{type},#{price},SYSDATE())
+
+    </insert>
+
+    <update id="updateAshareTransaction" parameterType="com.fangln.dd.dto.AshareTransaction">
+      update ashare_transaction
+      <set>
+        <if test="win_day != null"> win_day = #{win_day},</if>
+
+      </set>
+        where id=#{id}
+
+    </update>
 
 </mapper>

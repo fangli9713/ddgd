@@ -1,6 +1,7 @@
 package com.fangln.dd.dao;
 
 import com.fangln.dd.dto.Ashare;
+import com.fangln.dd.dto.AshareTransaction;
 import com.fangln.dd.dto.HistoryPrice;
 import org.springframework.stereotype.Repository;
 
@@ -17,4 +18,11 @@ public interface AshareDao {
     public List<HistoryPrice> selectAshareHistoryPriceList(HistoryPrice historyPrice);
 
     public int insertAshareHistoryPrice(HistoryPrice historyPrice);
+
+    List<AshareTransaction> selectAshareTransactionList(AshareTransaction ashareTransaction);
+
+    int insertAshareTransaction (AshareTransaction ashareTransaction);
+
+    int updateAshareTransaction (AshareTransaction ashareTransaction);
+
 }

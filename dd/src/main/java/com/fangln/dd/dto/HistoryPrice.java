@@ -25,4 +25,6 @@ public class HistoryPrice implements Serializable {
     private BigDecimal psy;
     private BigDecimal psyma;
     private java.util.Date create_time;
+
+    private Date date_gt;
 }
