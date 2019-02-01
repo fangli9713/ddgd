@@ -1,0 +1,8 @@
+syntax = "proto3";
+package com.beckparking.superpark.dto.app.netty;
+
+message BaseResult{
+    int32 code = 1;
+    string data = 2;
+    string method = 3;
+}
