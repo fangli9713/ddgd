@@ -3,6 +3,7 @@ package com.fangln.dd.init.netty;
 import com.fangln.dd.init.netty.dto.BaseMsgOuterClass;
 import io.netty.channel.*;
 import io.netty.handler.timeout.ReadTimeoutException;
+import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,14 +85,16 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object obj)
             throws Exception {
-        BaseMsgOuterClass.BaseMsg msg = (BaseMsgOuterClass.BaseMsg)obj;
-        //消息会在这个方法接收到，msg就是经过解码器解码后得到的消息，框架自动帮你做好了粘包拆包和解码的工作  
-       // System.out.println("msg====="+ JsonFormat.printToString(msg));
+        //消息会在这个方法接收到，msg就是经过解码器解码后得到的消息，框架自动帮你做好了粘包拆包和解码的工作
+        // System.out.println("msg====="+ JsonFormat.printToString(msg));
         try {
+            BaseMsgOuterClass.BaseMsg msg = (BaseMsgOuterClass.BaseMsg)obj;
             SocketHandler.handle(ctx,msg);
 
         }catch (Exception e){
             e.printStackTrace();
+        }finally {
+            ReferenceCountUtil.release(obj);
         }
     }
 }

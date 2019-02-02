@@ -29,7 +29,7 @@ public class HeartBeatServerHandler extends ChannelInboundHandlerAdapter {
             if (event.state() == IdleState.READER_IDLE) {
                 Map<String,Object> map = new HashMap<>();
                 map.put("1",2);
-              //  SocketHandler.writeChannel(ctx,0, JSON.toJSONString(map),"heart");
+              SocketHandler.writeChannel(ctx,0, JSON.toJSONString(map),"heart");
                // loss_connect_time++;
                 if (loss_connect_time > 2) {
                    // ctx.channel().close();
