@@ -1,6 +1,8 @@
 package com.fangln.dd.init.netty;
 
+import com.alibaba.fastjson.JSON;
 import com.fangln.dd.init.netty.dto.BaseMsgOuterClass;
+import com.googlecode.protobuf.format.JsonFormat;
 import io.netty.channel.*;
 import io.netty.handler.timeout.ReadTimeoutException;
 import io.netty.util.ReferenceCountUtil;
@@ -73,22 +75,20 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         super.exceptionCaught(ctx, cause);
         Channel channel = ctx.channel();
         //……
-        if(channel.isActive())
+        if(channel.isActive()) {
             ctx.close();
+        }
 
         cause.printStackTrace();
     }
-
-    @Resource
-    private SocketHandler socketHandler;
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object obj)
             throws Exception {
         //消息会在这个方法接收到，msg就是经过解码器解码后得到的消息，框架自动帮你做好了粘包拆包和解码的工作
-        // System.out.println("msg====="+ JsonFormat.printToString(msg));
+        BaseMsgOuterClass.BaseMsg msg = (BaseMsgOuterClass.BaseMsg)obj;
+        System.out.println("msg====="+ new JsonFormat().printToString(msg));
         try {
-            BaseMsgOuterClass.BaseMsg msg = (BaseMsgOuterClass.BaseMsg)obj;
             SocketHandler.handle(ctx,msg);
 
         }catch (Exception e){

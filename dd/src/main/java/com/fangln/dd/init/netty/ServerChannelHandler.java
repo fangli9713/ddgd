@@ -19,9 +19,12 @@ public class ServerChannelHandler extends ChannelInitializer<SocketChannel>{
     @Override
     protected void initChannel(SocketChannel ch){
         ChannelPipeline pipeline = ch.pipeline();
-        pipeline.addLast( new IdleStateHandler(6, 8, 10,TimeUnit.SECONDS));// //此两项为添加心跳机制,60秒查看一次在线的客户端channel是否空闲
-        pipeline.addLast(new HeartBeatServerHandler());// 心跳处理handler
-        pipeline.addLast(new ReadTimeoutHandler(20));
+        // //此两项为添加心跳机制,60秒查看一次在线的客户端channel是否空闲
+       // pipeline.addLast( new IdleStateHandler(60, 60, 60,TimeUnit.SECONDS));
+        // 超时处理
+        pipeline.addLast(new ServerIdleStateTrigger());
+        //超时handler
+        pipeline.addLast(new ReadTimeoutHandler(60));
 
         // ----Protobuf处理器，这里的配置是关键----
         pipeline.addLast(new ProtobufVarint32FrameDecoder());// 用于decode前解决半包和粘包问题（利用包头中的包含数组长度来识别半包粘包）

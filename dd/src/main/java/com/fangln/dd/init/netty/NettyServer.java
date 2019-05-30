@@ -19,7 +19,9 @@ public class NettyServer {
     //private static Logger log = LoggerFactory.getLogger(NettyServer.class);
 
     private Channel channel;
-    //连接处理group
+    /**
+     * 连接处理group
+     */
     private final EventLoopGroup boss = new NioEventLoopGroup();
     //事件处理group
     private final EventLoopGroup worker = new NioEventLoopGroup();

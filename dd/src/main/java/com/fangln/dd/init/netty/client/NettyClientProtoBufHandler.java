@@ -1,27 +1,36 @@
 package com.fangln.dd.init.netty.client;
 
-import com.fangln.dd.init.netty.ServerHandler;
+import com.fangln.dd.init.netty.dto.BaseMsgOuterClass;
 import com.fangln.dd.init.netty.dto.BaseResultOuterClass;
 import com.googlecode.protobuf.format.JsonFormat;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.util.concurrent.ScheduledFuture;
+
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Created by Fangln on 2019/1/30.
- */
-public class NettyClientProtoBufHandler  extends SimpleChannelInboundHandler<BaseResultOuterClass.BaseResult> {
+  * @description: 客户端处理类
+  * @author fanglinan
+  * @date 2019/5/30
+  */
+public class NettyClientProtoBufHandler  extends ChannelInboundHandlerAdapter {
 
-    private static Logger log = LoggerFactory.getLogger(ServerHandler.class);
-    private int count = 0;
+    final private Random random = new Random();
+    final private int baseRandom = 8;
 
+    private Channel channel;
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception { // (5)
-        Channel incoming = ctx.channel();
-        //System.out.println("ChatClient:" + incoming.remoteAddress() + "上线");
+        super.channelActive(ctx);
+        this.channel = ctx.channel();
+
+        ping(ctx.channel());
 
     }
 
@@ -32,15 +41,64 @@ public class NettyClientProtoBufHandler  extends SimpleChannelInboundHandler<Bas
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, BaseResultOuterClass.BaseResult ret)
-            throws Exception {
-        //消息会在这个方法接收到，msg就是经过解码器解码后得到的消息，框架自动帮你做好了粘包拆包和解码的工作
-       // System.out.println("服务器返回的data数据==="+ JsonFormat.printToString(ret));
-        handle(ctx,ret);
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception{
+        if (evt instanceof IdleStateEvent) {
+            IdleState state = ((IdleStateEvent) evt).state();
+            if (state == IdleState.WRITER_IDLE) {
+                // write heartbeat to server
+                ctx.writeAndFlush(NettyClientProtoBufHandler.heartMsg());
+            }
+        } else {
+            super.userEventTriggered(ctx, evt);
+        }
+
     }
 
-    public void handle(ChannelHandlerContext ctx, BaseResultOuterClass.BaseResult msg) throws Exception{
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object obj)
+            throws Exception {
+        BaseResultOuterClass.BaseResult msg = ( BaseResultOuterClass.BaseResult)obj;
 
-        System.out.println(JsonFormat.printToString(msg));
+        //消息会在这个方法接收到，msg就是经过解码器解码后得到的消息，框架自动帮你做好了粘包拆包和解码的工作
+        System.out.println("服务器返回的data数据==="+ new JsonFormat().printToString(msg));
+        handle(ctx,msg);
+    }
+
+    private void ping(Channel channel) {
+        int second = Math.max(1, random.nextInt(baseRandom));
+        System.out.println("next heart beat will send after " + second + "s.");
+        ScheduledFuture<?> future = channel.eventLoop().schedule(()-> {
+                if (channel.isActive()) {
+                    System.out.println("sending heart beat to the server...");
+                    channel.writeAndFlush(NettyClientProtoBufHandler.heartMsg());
+                } else {
+                    System.err.println("The connection had broken, cancel the task that will send a heart beat.");
+                    channel.closeFuture();
+                    throw new RuntimeException();
+                }
+        }, second, TimeUnit.SECONDS);
+
+        future.addListener(s-> {
+            if (s.isSuccess()) {
+                ping(channel);
+            }
+        });
+    }
+
+
+    public void handle(ChannelHandlerContext ctx, BaseResultOuterClass.BaseResult msg) throws Exception{
+        System.out.println(new JsonFormat().printToString(msg));
+
+        final String method = msg.getMethod();
+        if(method.equals("heart") ){
+            ctx.writeAndFlush(heartMsg());
+        }
+    }
+
+    public static BaseMsgOuterClass.BaseMsg.Builder heartMsg(){
+        BaseMsgOuterClass.BaseMsg.Builder baseMsg = BaseMsgOuterClass.BaseMsg.newBuilder();
+        baseMsg.setMethod("heart");
+
+        return baseMsg;
     }
 }

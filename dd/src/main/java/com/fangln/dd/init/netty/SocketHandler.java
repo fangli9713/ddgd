@@ -13,7 +13,6 @@ import java.util.Map;
 
 ;
 
-@Service("socketHandler")
 public class SocketHandler {
 
 	
@@ -70,8 +69,7 @@ public class SocketHandler {
         return newBuilder;
 	}
 	public static void writeChannel(ChannelHandlerContext ctx,int code,String info,String method){
-	    BaseResultOuterClass.BaseResult.Builder createBaseResult = createBaseResult(code, info, method);
-	    ctx.writeAndFlush(createBaseResult);
+	    ctx.writeAndFlush(createBaseResult(code, info, method));
 	}
 	
 	/**-----------------------------------------具体的业务实现-------------------------------------------**/
@@ -80,7 +78,7 @@ public class SocketHandler {
 	 * 接收合作方上传的入场记录
 	 * @return
 	 */
-	public boolean uploadEnterInfo(ChannelHandlerContext ctx, BaseMsgOuterClass.BaseMsg msg){
+	public static boolean uploadEnterInfo(ChannelHandlerContext ctx, BaseMsgOuterClass.BaseMsg msg){
 		Map<String,Object> returnMap = new HashMap<String,Object>();
 		returnMap.put("return_code", 0);
 		returnMap.put("return_des", "成功");

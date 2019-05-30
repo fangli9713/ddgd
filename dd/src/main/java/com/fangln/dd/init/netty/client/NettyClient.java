@@ -1,5 +1,7 @@
 package com.fangln.dd.init.netty.client;
 
+import com.fangln.dd.init.netty.dto.BaseMsgOuterClass;
+import com.fangln.dd.init.netty.dto.BaseResultOuterClass;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -10,10 +12,9 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import io.netty.handler.timeout.ReadTimeoutHandler;
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.lang3.time.DateUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
@@ -44,14 +45,15 @@ public class NettyClient {
                 handler(new LoggingHandler(LogLevel.INFO)).handler(new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel sc) throws Exception {
-                sc.pipeline().addLast(new NettyClientProtoBufInitializer()); //客户端业务处理类
+                //客户端业务处理类
+                sc.pipeline().addLast(new NettyClientProtoBufInitializer());
             }
         });
     }
     public void connect(){
         try {
-            this.cf = b.connect("10.1.3.32", PORT).sync();
-            System.out.println(DateFormatUtils.format(new Date(),"yyyy-MM-dd HH:mm:ss") +"远程服务器已经连接, 可以进行数据交换..");
+            this.cf = b.connect("192.168.3.45", PORT).sync();
+            System.out.println(FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss").format(new Date()) +"远程服务器已经连接, 可以进行数据交换..");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,5 +68,14 @@ public class NettyClient {
             this.connect();
         }
         return this.cf;
+    }
+
+    public static void main(String[] args) {
+        NettyClient client = new NettyClient();
+        final ChannelFuture channelFuture = client.getChannelFuture();
+        BaseMsgOuterClass.BaseMsg.Builder builder = BaseMsgOuterClass.BaseMsg.newBuilder();
+        builder.setToken("111111111");
+        channelFuture.channel().writeAndFlush(builder);
+
     }
 }
