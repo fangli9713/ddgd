@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.fangln.dd.init.netty.dto.BaseMsgOuterClass;
 import com.fangln.dd.init.netty.dto.BaseResultOuterClass;
 import com.googlecode.protobuf.format.JsonFormat;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.springframework.stereotype.Service;
 
@@ -11,8 +12,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-;
 
+@Service("socketHandler")
 public class SocketHandler {
 
 	
@@ -68,8 +69,8 @@ public class SocketHandler {
         newBuilder.setMethod(method);
         return newBuilder;
 	}
-	public static void writeChannel(ChannelHandlerContext ctx,int code,String info,String method){
-	    ctx.writeAndFlush(createBaseResult(code, info, method));
+	public static void writeChannel(Channel channel, int code, String info, String method){
+		channel.writeAndFlush(createBaseResult(code, info, method));
 	}
 	
 	/**-----------------------------------------具体的业务实现-------------------------------------------**/

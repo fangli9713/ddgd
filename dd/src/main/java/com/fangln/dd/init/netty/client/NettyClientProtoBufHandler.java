@@ -21,15 +21,14 @@ import java.util.concurrent.TimeUnit;
 public class NettyClientProtoBufHandler  extends ChannelInboundHandlerAdapter {
 
     final private Random random = new Random();
-    final private int baseRandom = 8;
+    final private int baseRandom = 5;
 
-    private Channel channel;
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception { // (5)
         super.channelActive(ctx);
-        this.channel = ctx.channel();
-
+       // this.channel = ctx.channel();
+        //发送心跳包
         ping(ctx.channel());
 
     }
@@ -65,7 +64,7 @@ public class NettyClientProtoBufHandler  extends ChannelInboundHandlerAdapter {
     }
 
     private void ping(Channel channel) {
-        int second = Math.max(1, random.nextInt(baseRandom));
+        int second = Math.max(5, random.nextInt(baseRandom));
         System.out.println("next heart beat will send after " + second + "s.");
         ScheduledFuture<?> future = channel.eventLoop().schedule(()-> {
                 if (channel.isActive()) {
@@ -85,7 +84,12 @@ public class NettyClientProtoBufHandler  extends ChannelInboundHandlerAdapter {
         });
     }
 
-
+    /**
+     * 对服务端下发的数据进行处理的方法
+     * @param ctx
+     * @param msg
+     * @throws Exception
+     */
     public void handle(ChannelHandlerContext ctx, BaseResultOuterClass.BaseResult msg) throws Exception{
         System.out.println(new JsonFormat().printToString(msg));
 
@@ -98,7 +102,6 @@ public class NettyClientProtoBufHandler  extends ChannelInboundHandlerAdapter {
     public static BaseMsgOuterClass.BaseMsg.Builder heartMsg(){
         BaseMsgOuterClass.BaseMsg.Builder baseMsg = BaseMsgOuterClass.BaseMsg.newBuilder();
         baseMsg.setMethod("heart");
-
         return baseMsg;
     }
 }
