@@ -1,4 +1,4 @@
-package com.fangln.dd.dao;
+package com.fangln.dd.dao; ＇
 
 import com.fangln.dd.entity.UserHabit;
 import org.springframework.stereotype.Repository;
@@ -10,6 +10,7 @@ import java.util.Map;
 public interface UserHabitMapper {
 
     List<UserHabit> selectUserHabit(Map<String,Object> paramMap);
-    int insertUserHabit(UserHabit userHabit);
-
+    int insertUserHabit(UserHabit userHabit);.
+Private string 
 }
+＿ abc
